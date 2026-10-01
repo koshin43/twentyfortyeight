@@ -68,6 +68,10 @@ html, body {
   -webkit-text-size-adjust: 100%;
 }
 
+/* iOS scrolls a merely overflow-hidden page (e.g. after the notification shade); a fixed body cannot scroll. */
+body { position: fixed; inset: 0; }
+#root { height: 100%; }
+
 button { font: inherit; color: inherit; cursor: pointer; }
 
 @media (prefers-reduced-motion: reduce) {

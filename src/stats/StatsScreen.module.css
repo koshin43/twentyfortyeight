@@ -37,19 +37,19 @@
   background: var(--track);
 }
 
-.segment label {
-  flex: 1;
+.segment label { position: relative; flex: 1; cursor: pointer; }
+.segment span {
+  display: block;
   padding: 7px 0;
   border-radius: var(--radius);
   text-align: center;
   font-size: 14px;
   font-weight: 700;
-  cursor: pointer;
 }
 
-.segment input { position: absolute; opacity: 0; pointer-events: none; }
-.segment label:has(:checked) { background: var(--button); color: var(--white); }
-.segment label:has(:focus-visible) { outline: 2px solid var(--start); }
+.segment input { position: absolute; width: 1px; height: 1px; margin: 0; opacity: 0; }
+.segment input:checked + span { background: var(--button); color: var(--white); }
+.segment input:focus-visible + span { outline: 2px solid var(--start); }
 
 .grid { width: 100%; margin: 12px auto; border-spacing: 5px; }
 .grid th { font-size: 12px; font-weight: 800; color: var(--muted); }

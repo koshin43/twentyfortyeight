@@ -42,7 +42,7 @@ export function StatsScreen({ stats, current, onClose }: Props) {
               checked={shown.pace === p}
               onChange={() => setSelected(setKey({ ...shown, pace: p }))}
             />
-            {capitalised(p)}
+            <span>{capitalised(p)}</span>
           </label>
         ))}
       </fieldset>

@@ -4,7 +4,7 @@
   gap: 10px;
   width: min(100%, 500px, calc((100dvh - 300px) + 32px));
   min-width: min(100%, 280px);
-  height: 100dvh;
+  height: 100%;
   margin: 0 auto;
   padding: max(16px, env(safe-area-inset-top)) 16px max(12px, env(safe-area-inset-bottom));
 }

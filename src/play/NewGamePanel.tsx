@@ -26,7 +26,7 @@ function Segment<T extends string | number>({ name, options, value, label, onCha
         {options.map((option) => (
           <label key={option}>
             <input type="radio" name={name} checked={value === option} onChange={() => onChange(option)} />
-            {label(option)}
+            <span>{label(option)}</span>
           </label>
         ))}
       </div>
@@ -71,7 +71,7 @@ export function NewGamePanel({ setup, game, onStart, onClose }: Props) {
                     checked={picks.includes(p)}
                     onChange={() => setPicks(picks.includes(p) ? picks.filter((x) => x !== p) : [...picks, p])}
                   />
-                  {POWER_NAMES[p]}
+                  <span>{POWER_NAMES[p]}</span>
                 </label>
               ))}
             </div>

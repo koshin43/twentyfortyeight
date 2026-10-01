@@ -36,32 +36,32 @@
 .segment legend, .draft legend { margin: 10px 0 5px; padding: 0; font-size: 12px; font-weight: 700; }
 
 .segment div { display: flex; gap: 3px; padding: 3px; border-radius: 8px; background: var(--track); }
-.segment label {
-  flex: 1;
+.segment label { position: relative; flex: 1; cursor: pointer; }
+.segment span {
+  display: block;
   padding: 8px 0;
   border-radius: var(--radius);
   text-align: center;
   font-size: 14px;
   font-weight: 700;
-  cursor: pointer;
 }
-.segment label:has(:checked) { background: var(--button); color: var(--white); }
+.segment input:checked + span { background: var(--button); color: var(--white); }
 
 .draft div { display: flex; gap: 8px; }
-.draft label {
-  flex: 1;
+.draft label { position: relative; flex: 1; cursor: pointer; }
+.draft span {
+  display: block;
   padding: 10px 0;
   border: 2px solid var(--cell);
   border-radius: 10px;
   text-align: center;
   font-size: 13px;
   font-weight: 700;
-  cursor: pointer;
 }
-.draft label:has(:checked) { border-color: var(--button); background: var(--button); color: var(--white); }
+.draft input:checked + span { border-color: var(--button); background: var(--button); color: var(--white); }
 
-.segment input, .draft input { position: absolute; opacity: 0; pointer-events: none; }
-.segment label:has(:focus-visible), .draft label:has(:focus-visible) { outline: 2px solid var(--start); }
+.segment input, .draft input { position: absolute; width: 1px; height: 1px; margin: 0; opacity: 0; }
+.segment input:focus-visible + span, .draft input:focus-visible + span { outline: 2px solid var(--start); }
 
 .warning { margin: 12px 0 0; padding: 8px 10px; border-radius: var(--radius); background: var(--soft); font-size: 13px; }
 
