@@ -9,6 +9,7 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['icon.svg'],
       manifest: {
+        id: '2048',
         name: '2048',
         short_name: '2048',
         description: 'The sliding-tile game, with stats, three board sizes and a Wild style.',
