@@ -1,16 +1,21 @@
+/* Fills the height the other rows leave, so the square board fits any screen and orientation. */
 .frame {
-  container-type: inline-size;
-  width: 100%;
+  container-type: size;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  place-items: center;
 }
 
 .board {
-  --gap: calc(100cqw * 0.12 / (var(--size) + 1));
-  --step: calc((100cqw - var(--gap)) / var(--size));
+  --side: min(100cqw, 100cqh);
+  --gap: calc(var(--side) * 0.12 / (var(--size) + 1));
+  --step: calc((var(--side) - var(--gap)) / var(--size));
   position: relative;
   display: grid;
   grid-template-columns: repeat(var(--size), 1fr);
   gap: var(--gap);
-  width: 100cqw;
+  width: var(--side);
   aspect-ratio: 1;
   padding: var(--gap);
   border-radius: var(--radius);
