@@ -1,0 +1,103 @@
+.frame {
+  container-type: inline-size;
+  width: 100%;
+}
+
+.board {
+  --gap: calc(100cqw * 0.12 / (var(--size) + 1));
+  --step: calc((100cqw - var(--gap)) / var(--size));
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--size), 1fr);
+  gap: var(--gap);
+  width: 100cqw;
+  aspect-ratio: 1;
+  padding: var(--gap);
+  border-radius: var(--radius);
+  background: var(--board);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.cell {
+  border-radius: calc(var(--radius) - 2px);
+  background: var(--cell);
+}
+
+.tile {
+  position: absolute;
+  top: var(--gap);
+  left: var(--gap);
+  width: calc(var(--step) - var(--gap));
+  height: calc(var(--step) - var(--gap));
+  transform: translate(calc(var(--c) * var(--step)), calc(var(--r) * var(--step)));
+}
+
+.face {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: calc(var(--radius) - 2px);
+  background: var(--tile-bg);
+  color: var(--tile-fg);
+  font-weight: 800;
+  font-size: calc(var(--step) * 0.5);
+  line-height: 1;
+}
+
+.tile[data-digits='3'] .face { font-size: calc(var(--step) * 0.4); }
+.tile[data-digits='4'] .face { font-size: calc(var(--step) * 0.31); }
+.tile[data-digits='5'] .face { font-size: calc(var(--step) * 0.25); }
+.tile[data-digits='6'] .face { font-size: calc(var(--step) * 0.21); }
+.tile[data-tile='joker'] .face { font-size: calc(var(--step) * 0.55); }
+.tile[data-tile='stone'] .face {
+  font-size: calc(var(--step) * 0.36);
+  background-image: repeating-linear-gradient(
+    45deg,
+    color-mix(in srgb, var(--white) 10%, transparent) 0 3px,
+    transparent 3px 9px
+  );
+}
+
+.board[data-picking] .tile { cursor: pointer; }
+.tile[data-selected] .face { outline: 4px solid var(--start); outline-offset: -4px; }
+
+.slide { animation: slide var(--slide-ms) ease-in-out; }
+@keyframes slide {
+  from { transform: translate(calc(var(--fc) * var(--step)), calc(var(--fr) * var(--step))); }
+}
+
+.pop { animation: pop var(--pop-ms) ease var(--slide-ms) backwards; }
+@keyframes pop {
+  0% { transform: scale(0); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+.grow { animation: grow var(--pop-ms) ease var(--slide-ms) backwards; }
+@keyframes grow {
+  from { opacity: 0; transform: scale(0); }
+}
+
+.drop { animation: drop var(--pop-ms) ease-in var(--slide-ms) backwards; }
+@keyframes drop {
+  from { opacity: 0; transform: scale(1.6); }
+}
+
+.merged { animation: slide var(--slide-ms) ease-in-out, vanish 1ms linear var(--slide-ms) forwards; }
+@keyframes vanish {
+  to { opacity: 0; }
+}
+
+.crumble { animation: crumble var(--pop-ms) ease-in forwards; }
+@keyframes crumble {
+  to { opacity: 0; transform: translate(calc(var(--c) * var(--step)), calc(var(--r) * var(--step))) scale(0.4) rotate(12deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide, .pop, .grow, .drop { animation: none; }
+  .merged, .crumble { display: none; }
+}

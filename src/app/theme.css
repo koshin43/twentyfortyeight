@@ -1,0 +1,75 @@
+:root {
+  --page: #faf8ef;
+  --text: #776e65;
+  --muted: #9a8f85;
+  --board: #bbada0;
+  --cell: #cdc1b4;
+  --box-label: #eee4da;
+  --time: #f65e3b;
+  --button: #8f7a66;
+  --button-text: #f9f6f2;
+  --start: #f65e3b;
+  --white: #ffffff;
+  --track: #e3dccf;
+  --soft: #f1ebe1;
+  --scrim: rgb(60 50 40 / 35%);
+  --win-overlay: rgb(237 194 46 / 50%);
+  --end-overlay: rgb(238 228 218 / 73%);
+
+  --tile-2: #eee4da;
+  --tile-4: #ede0c8;
+  --tile-8: #f2b179;
+  --tile-16: #f59563;
+  --tile-32: #f67c5f;
+  --tile-64: #f65e3b;
+  --tile-128: #edcf72;
+  --tile-256: #edcc61;
+  --tile-512: #edc850;
+  --tile-1024: #edc53f;
+  --tile-2048: #edc22e;
+  --tile-super: #3c3a32;
+  --tile-joker: #8e5ab5;
+  --tile-stone: #7d756d;
+
+  --radius: 6px;
+  --radius-lg: 14px;
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --slide-ms: 100ms;
+  --pop-ms: 200ms;
+}
+
+/* One tile color per value; values above 2048 share the dark color. */
+[data-tile] { --tile-bg: var(--tile-super); --tile-fg: var(--white); }
+[data-tile='2'] { --tile-bg: var(--tile-2); --tile-fg: var(--text); }
+[data-tile='4'] { --tile-bg: var(--tile-4); --tile-fg: var(--text); }
+[data-tile='8'] { --tile-bg: var(--tile-8); }
+[data-tile='16'] { --tile-bg: var(--tile-16); }
+[data-tile='32'] { --tile-bg: var(--tile-32); }
+[data-tile='64'] { --tile-bg: var(--tile-64); }
+[data-tile='128'] { --tile-bg: var(--tile-128); }
+[data-tile='256'] { --tile-bg: var(--tile-256); }
+[data-tile='512'] { --tile-bg: var(--tile-512); }
+[data-tile='1024'] { --tile-bg: var(--tile-1024); }
+[data-tile='2048'] { --tile-bg: var(--tile-2048); }
+[data-tile='joker'] { --tile-bg: var(--tile-joker); }
+[data-tile='stone'] { --tile-bg: var(--tile-stone); }
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background: var(--page);
+  color: var(--text);
+  font-family: var(--font);
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+}
+
+button { font: inherit; color: inherit; cursor: pointer; }
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --slide-ms: 0ms; --pop-ms: 0ms; }
+}

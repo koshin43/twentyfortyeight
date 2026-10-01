@@ -1,0 +1,53 @@
+.bar { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.powers { display: flex; gap: 14px; justify-content: center; }
+
+.power {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 64px;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  background: var(--button);
+  color: var(--white);
+  font-size: 22px;
+}
+
+.name { margin-top: 2px; font-size: 11px; font-weight: 700; }
+
+.power[data-status='recharging'] { background: var(--cell); }
+.power[data-status='notDrafted'] { border: 2px dashed var(--cell); background: transparent; color: var(--cell); }
+.power:disabled { cursor: default; }
+.power[data-status='ready']:disabled { opacity: 0.5; }
+.power[aria-pressed='true'] { outline: 3px solid var(--start); outline-offset: 2px; }
+
+.power[data-glow] {
+  border-color: var(--tile-2048);
+  box-shadow: 0 0 12px 3px var(--tile-2048);
+  animation: glow 1.2s ease-in-out infinite alternate;
+}
+@keyframes glow {
+  to { opacity: 0.75; }
+}
+
+.badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  min-width: 22px;
+  padding: 2px 5px;
+  border-radius: 11px;
+  background: var(--text);
+  color: var(--white);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.message { margin: 0; font-size: 14px; font-weight: 700; }
+
+@media (prefers-reduced-motion: reduce) {
+  .power[data-glow] { animation: none; }
+}

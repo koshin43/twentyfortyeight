@@ -1,0 +1,52 @@
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: var(--radius);
+  animation: appear 600ms ease 300ms backwards;
+}
+@keyframes appear {
+  from { opacity: 0; }
+}
+
+.overlay h2 { margin: 0 0 6px; font-size: clamp(28px, 10cqw, 56px); font-weight: 800; }
+.overlay p { margin: 0; font-size: 18px; font-weight: 700; }
+
+.win { background: var(--win-overlay); color: var(--white); }
+.end { background: var(--end-overlay); color: var(--text); }
+.newBest { color: var(--start); }
+
+.actions { display: flex; gap: 10px; margin-top: 14px; }
+.actions button {
+  padding: 10px 16px;
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--button);
+  color: var(--button-text);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.banner {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 2;
+  transform: translate(-50%, -50%);
+  padding: 8px 16px;
+  border-radius: 20px;
+  background: var(--tile-2048);
+  color: var(--white);
+  font-weight: 800;
+  white-space: nowrap;
+  animation: appear 200ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay, .banner { animation: none; }
+}
