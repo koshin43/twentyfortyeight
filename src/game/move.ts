@@ -40,7 +40,8 @@ export function move(game: Game, dir: Direction): Outcome | null {
   const moved: Game = { ...game, tiles, nextTileId: slid.nextTileId, score: game.score + slid.gained, bestTile, wild };
   const { tile, position } = spawn(moved, game.size, spawnOdds(moved));
   events.push({ kind: 'spawn', tile });
-  return withEnd({ game: { ...moved, ...position }, events });
+  const spawnedBest = tile.kind === 'number' ? Math.max(bestTile, tile.value) : bestTile;
+  return withEnd({ game: { ...moved, ...position, bestTile: spawnedBest }, events });
 }
 
 function recharge(powers: Wild['powers']): Wild['powers'] {

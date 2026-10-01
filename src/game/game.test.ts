@@ -127,6 +127,12 @@ describe('move order', () => {
     expect(show(out.game)).toBe(tidy(CRUMBLE_BOARD));
     expect(out.events.map((e) => e.kind)).toEqual(['move', 'merge', 'crumble', 'spawn']);
   });
+
+  it('counts a spawned 4 toward the best tile, keeping the game valid', () => {
+    const out = move(game('2 _ _\n_ _ _\n_ _ _', { style: 'classic' }), 'right')!;
+    expect(show(out.game)).toBe(tidy('_ _ 2\n_ _ 4\n_ _ _'));
+    expect([out.game.bestTile, isGame(out.game)]).toEqual([4, true]);
+  });
 });
 
 const STONE_SEED = 7;
