@@ -13,6 +13,7 @@
 .title { flex: 1; margin: 0; font-size: 42px; font-weight: 800; line-height: 1; }
 
 .box {
+  position: relative;
   min-width: 64px;
   padding: 4px 10px;
   border-radius: 5px;
@@ -22,6 +23,22 @@
 }
 .box small { display: block; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; color: var(--box-label); }
 .box b { font-size: 18px; }
+.gain {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 40%;
+  color: var(--text);
+  font-size: 18px;
+  font-weight: 800;
+  pointer-events: none;
+  opacity: 0;
+  animation: gain var(--gain-ms) ease-out forwards;
+}
+@keyframes gain {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-42px); }
+}
 .time { background: var(--time); }
 
 .pace { flex: 1; margin: 0; font-size: 14px; font-weight: 600; }
@@ -47,3 +64,7 @@
 }
 .notice span { flex: 1; }
 .notice button { border: 0; background: none; font-weight: 800; }
+
+@media (prefers-reduced-motion: reduce) {
+  .gain { display: none; }
+}

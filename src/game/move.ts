@@ -12,7 +12,7 @@ export function move(game: Game, dir: Direction): Outcome | null {
   const bestTile = Math.max(game.bestTile, ...spawned.game.tiles.map((t) => t.value));
   const next: Game = { ...spawned.game, bestTile };
 
-  const events: GameEvent[] = [{ kind: 'move' }, ...slid.events, { kind: 'spawn', tile: spawned.tile }];
+  const events: GameEvent[] = [{ kind: 'move', dir }, ...slid.events, { kind: 'spawn', tile: spawned.tile }];
   if (bestTile > game.bestTile) events.push({ kind: 'bestTile', value: bestTile });
   if (game.bestTile < WIN_TILE && bestTile >= WIN_TILE) events.push({ kind: 'win' });
   if (isStuck(next)) events.push({ kind: 'end' });

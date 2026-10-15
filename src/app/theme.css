@@ -33,6 +33,10 @@
   --font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --slide-ms: 100ms;
   --pop-ms: 200ms;
+  --blitz-slide-ms: 70ms;
+  --burst-ms: 480ms;
+  --kick-ms: 200ms;
+  --gain-ms: 750ms;
 }
 
 /* One tile color per value; values above 2048 share the dark color. */
@@ -68,5 +72,5 @@ html, body {
 button { font: inherit; color: inherit; cursor: pointer; }
 
 @media (prefers-reduced-motion: reduce) {
-  :root { --slide-ms: 0ms; --pop-ms: 0ms; }
+  :root { --slide-ms: 0ms; --pop-ms: 0ms; --blitz-slide-ms: 0ms; }
 }

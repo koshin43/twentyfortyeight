@@ -13,7 +13,7 @@ Slide the tiles with a swipe on the board, or with the arrow keys / W A S D on a
 **New Game** chooses the pace:
 
 - **Endless**: play until the board is stuck.
-- **Blitz**: a 3-minute game. The clock starts on your first swipe and pauses while the app is hidden or a dialog is open.
+- **Blitz**: a 3-minute game. The clock starts on your first swipe and pauses while the app is hidden or a dialog is open. Moves hit harder in Blitz, and harder still in the last 30 seconds.
 
 **Stats** (📊) shows the best score, best tile, games played, win rate and top 10 for each pace.
 

@@ -13,7 +13,7 @@ const LINE: Record<Direction, (i: number, k: number) => [number, number]> = {
   down: (i, k) => [LAST - k, i],
 };
 
-export interface Slid {
+interface Slid {
   tiles: Tile[];
   events: GameEvent[];
   nextTileId: number;

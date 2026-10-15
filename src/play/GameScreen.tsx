@@ -24,6 +24,8 @@ const PART_NAMES: Record<Part, string> = {
 
 const WIN_BANNER_MS = 2000;
 const CLOCK_REFRESH_MS = 250;
+/** Blitz moves hit hardest in the last 30 seconds. */
+const RUSH_MS = 30_000;
 
 function clock(ms: number): string {
   const seconds = Math.ceil(ms / 1000);
@@ -43,7 +45,8 @@ export function GameScreen() {
   const { game, stats, sound } = save;
   const set = stats[game.pace];
   const end = gameEnd(game);
-  const winOverlay = !end && game.pace === 'endless' && isWon(game) && !game.winSeen;
+  const blitz = game.pace === 'blitz';
+  const winOverlay = !end && !blitz && isWon(game) && !game.winSeen;
   const blocked = end !== null || winOverlay || dialog !== null;
 
   useEffect(() => writeSave(save), [save]);
@@ -53,14 +56,13 @@ export function GameScreen() {
     const ended = outcome.events.some((e) => e.kind === 'end');
     const next = { ...save, game: outcome.game, stats: ended ? recordGame(stats, outcome.game, t) : stats };
     setSave(next);
-    setRunningSince(game.pace === 'blitz' && !ended ? t : null);
+    setRunningSince(blitz && !ended ? t : null);
     setNow(t);
     setShown((s) => ({ events: outcome.events, seq: s.seq + 1 }));
-    if (game.pace === 'blitz' && outcome.events.some((e) => e.kind === 'win')) setBanner(true);
+    if (blitz && outcome.events.some((e) => e.kind === 'win')) setBanner(true);
     if (sound) playFeedback(outcome.events);
     return next;
   }
-
 
   /** Stops the Blitz clock, keeping the time left in the game. */
   function pause(): Save {
@@ -146,6 +148,7 @@ export function GameScreen() {
   }, [banner]);
 
   const msLeft = game.blitzMsLeft === null ? null : runningSince === null ? game.blitzMsLeft : Math.max(0, game.blitzMsLeft - Math.max(0, now - runningSince));
+  const gain = shown.events.reduce((sum, e) => sum + (e.kind === 'merge' ? e.tile.value : 0), 0);
   const paused = runningSince === null && end === null && game.blitzMsLeft !== null && game.blitzMsLeft < BLITZ_MS;
 
   return (
@@ -162,6 +165,9 @@ export function GameScreen() {
         <div className={css.box} role="group" aria-label="Score">
           <small>SCORE</small>
           <b>{formatNumber(game.score)}</b>
+          {blitz && gain > 0 && (
+            <span key={shown.seq} className={css.gain} aria-hidden>+{formatNumber(gain)}</span>
+          )}
         </div>
         <div className={css.box} role="group" aria-label="Best">
           <small>BEST</small>
@@ -187,7 +193,14 @@ export function GameScreen() {
         </button>
       </div>
 
-      <Board game={game} events={shown.events} seq={shown.seq} onSwipe={swipe}>
+      <Board
+        game={game}
+        events={shown.events}
+        seq={shown.seq}
+        blitz={blitz}
+        rush={msLeft !== null && msLeft <= RUSH_MS}
+        onSwipe={swipe}
+      >
         {banner && !end && <WinBanner />}
         {winOverlay && (
           <WinOverlay onKeepGoing={() => setSave({ ...save, game: keepGoing(game) })} onNewGame={() => openDialog('newGame')} />

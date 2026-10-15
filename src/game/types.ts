@@ -21,7 +21,7 @@ export interface Game {
 
 /** What happened during one action, in order. The only source for animation, sound and vibration. */
 export type GameEvent =
-  | { kind: 'move' }
+  | { kind: 'move'; dir: Direction }
   | { kind: 'slide'; id: number; from: [number, number]; to: [number, number] }
   | { kind: 'merge'; tile: Tile; sources: [Tile, Tile] }
   | { kind: 'spawn'; tile: Tile }
