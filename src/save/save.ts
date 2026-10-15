@@ -1,8 +1,7 @@
-import { DEFAULT_SETUP, isGame, isSetup, newGame, type Game, type Setup } from '../game';
+import { isGame, newGame, type Game } from '../game';
 import { emptyStats, isStats, type Stats } from '../stats';
 
 export interface Save {
-  setup: Setup;
   sound: boolean;
   game: Game;
   stats: Stats;
@@ -11,10 +10,9 @@ export interface Save {
 export type Part = keyof Save;
 
 const KEY = '2048';
-const PARTS: Part[] = ['setup', 'sound', 'game', 'stats'];
+const PARTS: Part[] = ['sound', 'game', 'stats'];
 
 const isPart: Record<Part, (value: unknown) => boolean> = {
-  setup: isSetup,
   sound: (value) => typeof value === 'boolean',
   game: isGame,
   stats: isStats,
@@ -48,12 +46,10 @@ export function loadSave(seed: number): { save: Save; reset: Part[] } {
   const reset = raw === null ? [] : PARTS.filter((part) => unreadable || !isPart[part](data[part]));
   const keep = <P extends Part>(part: P, fallback: () => Save[P]): Save[P] =>
     reset.includes(part) || raw === null ? fallback() : (data[part] as Save[P]);
-  const setup = keep('setup', () => DEFAULT_SETUP);
   return {
     save: {
-      setup,
       sound: keep('sound', () => true),
-      game: keep('game', () => newGame(setup, seed)),
+      game: keep('game', () => newGame('endless', seed)),
       stats: keep('stats', emptyStats),
     },
     reset,

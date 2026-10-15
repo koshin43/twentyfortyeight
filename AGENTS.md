@@ -25,10 +25,10 @@
 - Do not create pass-through wrappers, generic repository layers, service locators, registries, event buses, plugin systems, or generic `Base*` components.
 - Do not create `utils.ts`, `helpers.ts`, `common.ts`, `misc.ts`, `lib/`, or generic `manager.ts` dumping grounds.
 - Do not duplicate types, validation rules, board dimensions, tile values, or palette values. Each has one owner.
-- Write one general mechanism and drive it with data instead of writing special cases. One line-slide routine handles all four directions, all three sizes, Jokers and stones. Per-size values, spawn odds, tile colors and event feedback are tables, not branches.
-- Derive values instead of tracking them. Won, ended, refills earned, best score and room are each computed from the game by one function where needed. They are never stored, cached, or mirrored in React state.
-- Implement a rule by its spec definition when that is cheap. A board is stuck when none of the four slides changes it. Undo restores a stored snapshot.
-- The engine's move events are the only source for animation, sound and vibration. Screens never work out merges, spawns or crumbles for themselves.
+- Write one general mechanism and drive it with data instead of writing special cases. One line-slide routine handles all four directions. Tile colors and event feedback are tables, not branches.
+- Derive values instead of tracking them. Won, ended and best score are each computed from the game by one function where needed. They are never stored, cached, or mirrored in React state.
+- Implement a rule by its spec definition when that is cheap. A board is stuck when none of the four slides changes it.
+- The engine's move events are the only source for animation, sound and vibration. Screens never work out merges or spawns for themselves.
 - Validate once, at the save boundary. Code behind that boundary trusts its types: no defensive checks, fallbacks, or branches for impossible cases inside rules or screens.
 - Build the UI from React, semantic HTML, and CSS Modules. Do not add a UI kit: dialogs are native `<dialog>` elements, segmented controls are styled radio inputs, toggles are styled checkboxes.
 - Beyond React, use the browser platform: Pointer Events, `KeyboardEvent`, `<dialog>`, CSS transitions, Web Audio, the Vibration API, and `crypto.getRandomValues` over libraries.
@@ -57,10 +57,10 @@ Use feature-first folders:
 
 ```text
 src/
-├── game/       pure rules: game state and its validation, seeded random, slide and merge with move events, spawning (room, Joker, stone), scoring, win and game over, powers
-├── stats/      recording finished games, per-set stats and top 10, stats validation, the Stats screen
+├── game/       pure rules: game state and its validation, seeded random, slide and merge with move events, spawning, scoring, win and game over, the Blitz clock
+├── stats/      recording finished games, per-pace stats and top 10, stats validation, the Stats screen
 ├── save/       the single `localStorage` key: read, validate each part, replace failing parts, write
-├── play/       the game screen: board and tile animation, keyboard and swipe input, scores and Blitz clock, power bar and targeting, New Game panel, overlays, sound and vibration
+├── play/       the game screen: board and tile animation, keyboard and swipe input, scores and Blitz clock, New Game panel, overlays, sound and vibration
 ├── app/        app shell, theme variables, top-level error boundary
 └── main.tsx    the only composition root
 ```
@@ -80,7 +80,7 @@ Rules:
 - `localStorage` is the only persistent store. Everything lives under one key, in the shape the spec defines, written in a single write. Nothing else is persisted.
 - Saved state is strictly validated on write and on read. Unknown and missing fields and broken invariants are errors.
 - A part that fails validation is replaced, never repaired. The spec defines the replacements and what the player sees.
-- Do not store what can be derived (won, refills earned, game ended, best score).
+- Do not store what can be derived (won, game ended, best score).
 - Do not add schema-version fields or migration machinery.
 - The save is written whenever state changes, so closing the app never loses a move.
 

@@ -1,11 +1,11 @@
-import { SIZES, type Game } from '../game';
+import { WIN_TILE, type Game } from '../game';
 import { formatNumber } from '../stats';
 import css from './BoardOverlay.module.css';
 
-export function WinOverlay({ game, onKeepGoing, onNewGame }: { game: Game; onKeepGoing: () => void; onNewGame: () => void }) {
+export function WinOverlay({ onKeepGoing, onNewGame }: { onKeepGoing: () => void; onNewGame: () => void }) {
   return (
     <div className={`${css.overlay} ${css.win}`} role="dialog" aria-label="You won">
-      <h2>You made {SIZES[game.size].winTile}!</h2>
+      <h2>You made {WIN_TILE}!</h2>
       <div className={css.actions}>
         <button onClick={onKeepGoing}>Keep Going</button>
         <button onClick={onNewGame}>New Game</button>
@@ -28,6 +28,6 @@ export function EndOverlay({ game, timeUp, newBest, onNewGame }: { game: Game; t
   );
 }
 
-export function WinBanner({ game }: { game: Game }) {
-  return <div className={css.banner} role="status">You made {SIZES[game.size].winTile}!</div>;
+export function WinBanner() {
+  return <div className={css.banner} role="status">You made {WIN_TILE}!</div>;
 }

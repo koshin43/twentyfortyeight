@@ -1,21 +1,18 @@
 import { useState } from 'react';
-import { BOARD_SIZES } from '../game';
+import { PACES, type Pace } from '../game';
 import { formatDate, formatNumber } from './format';
-import { bestScore, isWonRecord, PACES, parseSetKey, setKey, setName, STYLES, type SetKey, type Stats } from './stats';
+import { bestScore, isWonRecord, paceName, type Stats } from './stats';
 import css from './StatsScreen.module.css';
 
 interface Props {
   stats: Stats;
-  current: SetKey;
+  current: Pace;
   onClose: () => void;
 }
 
-const capitalised = (word: string) => word[0].toUpperCase() + word.slice(1);
-
 /** Full-screen dialog over the game. Mounted only while open. */
 export function StatsScreen({ stats, current, onClose }: Props) {
-  const [selected, setSelected] = useState<SetKey>(current);
-  const shown = parseSetKey(selected);
+  const [selected, setSelected] = useState<Pace>(current);
   const set = stats[selected];
   const [now] = useState(Date.now);
 
@@ -32,56 +29,21 @@ export function StatsScreen({ stats, current, onClose }: Props) {
         <button className={css.close} aria-label="Close" onClick={onClose}>✕</button>
       </header>
 
-      <fieldset className={css.segment}>
-        <legend className={css.hidden}>Pace</legend>
-        {PACES.map((p) => (
-          <label key={p}>
-            <input
-              type="radio"
-              name="stats-pace"
-              checked={shown.pace === p}
-              onChange={() => setSelected(setKey({ ...shown, pace: p }))}
-            />
-            <span>{capitalised(p)}</span>
-          </label>
-        ))}
-      </fieldset>
+      <div className={css.grid}>
+        {PACES.map((pace) => {
+          const best = bestScore(stats[pace]);
+          return (
+            <button key={pace} className={css.cell} aria-pressed={pace === selected} onClick={() => setSelected(pace)}>
+              <small>{paceName(pace)}</small>
+              {best === null ? '—' : formatNumber(best)}
+              {stats[pace].played > 0 && <small>{stats[pace].bestTile}</small>}
+            </button>
+          );
+        })}
+      </div>
 
-      <table className={css.grid}>
-        <thead>
-          <tr>
-            <td />
-            {BOARD_SIZES.map((s) => <th key={s} scope="col">{s}×{s}</th>)}
-          </tr>
-        </thead>
-        <tbody>
-          {STYLES.map((st) => (
-            <tr key={st}>
-              <th scope="row">{capitalised(st)}</th>
-              {BOARD_SIZES.map((s) => {
-                const key = setKey({ size: s, style: st, pace: shown.pace });
-                const best = bestScore(stats[key]);
-                return (
-                  <td key={s}>
-                    <button
-                      className={css.cell}
-                      aria-pressed={key === selected}
-                      aria-label={setName({ size: s, style: st, pace: shown.pace })}
-                      onClick={() => setSelected(key)}
-                    >
-                      {best === null ? '—' : formatNumber(best)}
-                      {stats[key].played > 0 && <small>{stats[key].bestTile}</small>}
-                    </button>
-                  </td>
-                );
-              })}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      <section className={css.detail} aria-label="Selected set">
-        <h3>{setName(shown)}</h3>
+      <section className={css.detail} aria-label="Selected pace">
+        <h3>{paceName(selected)}</h3>
         {set.played === 0 ? (
           <p>No games yet</p>
         ) : (
@@ -96,7 +58,7 @@ export function StatsScreen({ stats, current, onClose }: Props) {
                 <li key={i}>
                   <span className={css.rank}>{i + 1}</span>
                   <span className={css.score}>{formatNumber(r.score)}</span>
-                  <span className={css.won}>{isWonRecord(selected, r) ? '✓' : ''}</span>
+                  <span className={css.won}>{isWonRecord(r) ? '✓' : ''}</span>
                   <span className={css.chip} data-tile={r.bestTile}>{r.bestTile}</span>
                   <span className={css.date}>{formatDate(r.endedAt, now)}</span>
                 </li>

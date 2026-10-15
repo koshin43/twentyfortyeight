@@ -12,7 +12,7 @@ export default defineConfig({
         id: '2048',
         name: '2048',
         short_name: '2048',
-        description: 'The sliding-tile game, with stats, three board sizes and a Wild style.',
+        description: 'The classic 4×4 sliding-tile game, with stats and a 3-minute Blitz pace.',
         display: 'standalone',
         orientation: 'portrait',
         background_color: '#faf8ef',

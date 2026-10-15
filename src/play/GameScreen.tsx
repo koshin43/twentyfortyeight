@@ -1,15 +1,13 @@
 import { useEffect, useEffectEvent, useState } from 'react';
 import {
-  BLITZ_MS, canUsePower, gameEnd, isWon, keepGoing, move, newGame, pickRefill, smash, spendTime, swap, undo,
-  type Direction, type Game, type GameEvent, type Outcome, type Power, type Setup,
+  BLITZ_MS, gameEnd, isWon, keepGoing, move, newGame, spendTime, type Direction, type GameEvent, type Outcome, type Pace,
 } from '../game';
 import { loadSave, writeSave, type Part, type Save } from '../save';
-import { bestScore, formatNumber, isNewBest, recordGame, setKey, setName, StatsScreen } from '../stats';
+import { bestScore, formatNumber, isNewBest, paceName, recordGame, StatsScreen } from '../stats';
 import { Board } from './Board';
 import { EndOverlay, WinBanner, WinOverlay } from './BoardOverlay';
 import { playFeedback } from './feedback';
 import { NewGamePanel } from './NewGamePanel';
-import { PowerBar, takesRefill } from './PowerBar';
 import { newSeed } from './seed';
 import css from './GameScreen.module.css';
 
@@ -19,7 +17,6 @@ const KEYS: Record<string, Direction> = {
 };
 
 const PART_NAMES: Record<Part, string> = {
-  setup: 'your new game choices',
   sound: 'your sound setting',
   game: 'your game',
   stats: 'your stats',
@@ -27,8 +24,6 @@ const PART_NAMES: Record<Part, string> = {
 
 const WIN_BANNER_MS = 2000;
 const CLOCK_REFRESH_MS = 250;
-
-type Targeting = { power: 'smash' | 'swap'; first: number | null };
 
 function clock(ms: number): string {
   const seconds = Math.ceil(ms / 1000);
@@ -42,12 +37,11 @@ export function GameScreen() {
   const [runningSince, setRunningSince] = useState<number | null>(null);
   const [now, setNow] = useState(() => Date.now());
   const [dialog, setDialog] = useState<'newGame' | 'stats' | null>(null);
-  const [targeting, setTargeting] = useState<Targeting | null>(null);
   const [shown, setShown] = useState<{ events: GameEvent[]; seq: number }>({ events: [], seq: 0 });
   const [banner, setBanner] = useState(false);
 
   const { game, stats, sound } = save;
-  const set = stats[setKey(game)];
+  const set = stats[game.pace];
   const end = gameEnd(game);
   const winOverlay = !end && game.pace === 'endless' && isWon(game) && !game.winSeen;
   const blocked = end !== null || winOverlay || dialog !== null;
@@ -67,17 +61,6 @@ export function GameScreen() {
     return next;
   }
 
-  /** Runs a player action with the clock's time spent first. Starts or resumes a Blitz clock. */
-  function act(run: (g: Game) => Outcome | null) {
-    const t = Date.now();
-    const spent = runningSince === null ? null : spendTime(game, t - runningSince);
-    if (spent && spent.events.length > 0) {
-      apply(spent, t);
-      return;
-    }
-    const outcome = run(spent?.game ?? game);
-    if (outcome) apply(outcome, t);
-  }
 
   /** Stops the Blitz clock, keeping the time left in the game. */
   function pause(): Save {
@@ -91,55 +74,27 @@ export function GameScreen() {
     return next;
   }
 
+  /** Plays a swipe with the clock's time spent first. Starts or resumes a Blitz clock. */
   function swipe(dir: Direction) {
     if (blocked) return;
-    setTargeting(null);
-    act((g) => move(g, dir));
-  }
-
-  function pick(id: number) {
-    if (!targeting) return;
-    if (targeting.power === 'smash') {
-      act((g) => {
-        const out = smash(g, id);
-        if (out) setTargeting(null);
-        return out;
-      });
-    } else if (targeting.first === null) {
-      if (game.tiles.find((t) => t.id === id)!.kind !== 'stone') setTargeting({ power: 'swap', first: id });
-    } else if (targeting.first === id) {
-      setTargeting({ power: 'swap', first: null });
-    } else {
-      const first = targeting.first;
-      act((g) => {
-        const out = swap(g, first, id);
-        if (out) setTargeting(null);
-        return out;
-      });
+    const t = Date.now();
+    const spent = runningSince === null ? null : spendTime(game, t - runningSince);
+    if (spent && spent.events.length > 0) {
+      apply(spent, t);
+      return;
     }
-  }
-
-  function usePower(power: Power) {
-    if (takesRefill(game, power)) {
-      setTargeting(null);
-      act((g) => ({ game: pickRefill(g, power), events: [] }));
-    } else if (power === 'undo') {
-      setTargeting(null);
-      act(undo);
-    } else if (canUsePower(game, power)) {
-      setTargeting(targeting?.power === power ? null : { power, first: null });
-    }
+    const outcome = move(spent?.game ?? game, dir);
+    if (outcome) apply(outcome, t);
   }
 
   function openDialog(which: 'newGame' | 'stats') {
     pause();
-    setTargeting(null);
     setDialog(which);
   }
 
-  function start(setup: Setup) {
+  function start(pace: Pace) {
     const abandoned = end === null && game.score > 0;
-    setSave({ setup, sound, game: newGame(setup, newSeed()), stats: abandoned ? recordGame(stats, game, Date.now()) : stats });
+    setSave({ sound, game: newGame(pace, newSeed()), stats: abandoned ? recordGame(stats, game, Date.now()) : stats });
     setRunningSince(null);
     setShown((s) => ({ events: [], seq: s.seq + 1 }));
     setBanner(false);
@@ -148,8 +103,7 @@ export function GameScreen() {
 
   const onKey = useEffectEvent((e: KeyboardEvent) => {
     if (e.key === 'Escape') {
-      if (dialog) setDialog(null);
-      else setTargeting(null);
+      setDialog(null);
       return;
     }
     const dir = KEYS[e.key];
@@ -216,7 +170,7 @@ export function GameScreen() {
       </header>
 
       <div className={css.row}>
-        <p className={css.setup}>{setName(game)}</p>
+        <p className={css.pace}>{paceName(game.pace)}</p>
         {msLeft !== null && (
           <div className={`${css.box} ${css.time}`} role="group" aria-label="Time">
             <small>{paused ? 'PAUSED' : 'TIME'}</small>
@@ -233,26 +187,16 @@ export function GameScreen() {
         </button>
       </div>
 
-      <Board
-        game={game}
-        events={shown.events}
-        seq={shown.seq}
-        picking={targeting !== null}
-        selected={targeting?.first ?? null}
-        onSwipe={swipe}
-        onPick={pick}
-      >
-        {banner && !end && <WinBanner game={game} />}
+      <Board game={game} events={shown.events} seq={shown.seq} onSwipe={swipe}>
+        {banner && !end && <WinBanner />}
         {winOverlay && (
-          <WinOverlay game={game} onKeepGoing={() => setSave({ ...save, game: keepGoing(game) })} onNewGame={() => openDialog('newGame')} />
+          <WinOverlay onKeepGoing={() => setSave({ ...save, game: keepGoing(game) })} onNewGame={() => openDialog('newGame')} />
         )}
         {end && <EndOverlay game={game} timeUp={end === 'timeUp'} newBest={isNewBest(set, game.score)} onNewGame={() => openDialog('newGame')} />}
       </Board>
 
-      {game.wild && <PowerBar game={game} targeting={targeting?.power ?? null} onPower={usePower} />}
-
-      {dialog === 'newGame' && <NewGamePanel setup={save.setup} game={game} onStart={start} onClose={() => setDialog(null)} />}
-      {dialog === 'stats' && <StatsScreen stats={stats} current={setKey(game)} onClose={() => setDialog(null)} />}
+      {dialog === 'newGame' && <NewGamePanel game={game} onStart={start} onClose={() => setDialog(null)} />}
+      {dialog === 'stats' && <StatsScreen stats={stats} current={game.pace} onClose={() => setDialog(null)} />}
     </main>
   );
 }

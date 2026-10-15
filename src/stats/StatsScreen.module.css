@@ -26,34 +26,7 @@
   font-weight: 800;
 }
 
-.hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
-
-.segment {
-  display: flex;
-  gap: 3px;
-  padding: 3px;
-  border: 0;
-  border-radius: 8px;
-  background: var(--track);
-}
-
-.segment label { position: relative; flex: 1; cursor: pointer; }
-.segment span {
-  display: block;
-  padding: 7px 0;
-  border-radius: var(--radius);
-  text-align: center;
-  font-size: 14px;
-  font-weight: 700;
-}
-
-.segment input { position: absolute; width: 1px; height: 1px; margin: 0; opacity: 0; }
-.segment input:checked + span { background: var(--button); color: var(--white); }
-.segment input:focus-visible + span { outline: 2px solid var(--start); }
-
-.grid { width: 100%; margin: 12px auto; border-spacing: 5px; }
-.grid th { font-size: 12px; font-weight: 800; color: var(--muted); }
-.grid th[scope='row'] { text-align: left; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 12px; margin-bottom: 12px; }
 
 .cell {
   display: block;

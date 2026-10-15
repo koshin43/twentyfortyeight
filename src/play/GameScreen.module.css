@@ -24,7 +24,7 @@
 .box b { font-size: 18px; }
 .time { background: var(--time); }
 
-.setup { flex: 1; margin: 0; font-size: 14px; font-weight: 600; }
+.pace { flex: 1; margin: 0; font-size: 14px; font-weight: 600; }
 
 .newGame, .icon {
   border: 0;
